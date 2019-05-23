@@ -8,6 +8,13 @@ object Constants {
 
     const val SMS_PATH = "content://sms"
 
-    val SMS_STRS = arrayOf("_id", "address", "body", "date", "person", "type")
+    const val SMS_VOLUME_ID = "_id"
+    const val SMS_VOLUME_ADDRESS = "address"
+    const val SMS_VOLUME_BODY = "body"
+    const val SMS_VOLUME_DATE = "date"
+    const val SMS_VOLUME_PERSON = "person"
+    const val SMS_VOLUME_TYPE = "type"
+
+    val SMS_STR = arrayOf(SMS_VOLUME_ID, SMS_VOLUME_ADDRESS,SMS_VOLUME_BODY, SMS_VOLUME_DATE, SMS_VOLUME_PERSON, SMS_VOLUME_TYPE)
 
 }
