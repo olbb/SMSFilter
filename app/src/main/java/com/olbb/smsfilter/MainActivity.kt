@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.olbb.smsfilter.data.Message
@@ -17,19 +16,20 @@ import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_activity_list_item.*
 
 class MainActivity : Activity() {
 
-    private lateinit var list : RecyclerView
     private lateinit var adapter: SimpleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        list = findViewById(android.R.id.list)
-        list!!.layoutManager = (LinearLayoutManager(this, RecyclerView.VERTICAL, false))
+        recycler.layoutManager = (LinearLayoutManager(this, RecyclerView.VERTICAL, false))
         adapter = SimpleAdapter()
-        list.adapter = adapter
+        recycler.adapter = adapter
     }
 
     fun readMsg(view:View) {
@@ -41,7 +41,7 @@ class MainActivity : Activity() {
     }
 
     private fun readMessage() {
-        Single.create(checkPermission()).subscribeOn(Schedulers.io()).flatMap { t -> Single.create(ReadMessage(this))}.observeOn(AndroidSchedulers.mainThread()).subscribe(read())
+        Single.create(checkPermission()).subscribeOn(Schedulers.io()).flatMap { Single.create(ReadMessage(this))}.observeOn(AndroidSchedulers.mainThread()).subscribe(read())
     }
 
     private fun read(): SingleObserver<List<Message>> {
@@ -61,12 +61,9 @@ class MainActivity : Activity() {
         }
     }
 
-    private  class SimpleHolder(view:View) : RecyclerView.ViewHolder(view) {
-        var sender:TextView = view.findViewById(R.id.list_item_sender_tv)
-        var body:TextView = view.findViewById(R.id.list_item_message_body_tv)
-    }
+    private  class SimpleHolder(override val containerView: View?) : RecyclerView.ViewHolder(containerView!!), LayoutContainer
 
-    private class SimpleAdapter() : RecyclerView.Adapter<SimpleHolder>() {
+    private class SimpleAdapter: RecyclerView.Adapter<SimpleHolder>() {
 
         var list:List<Message>? = null
 
@@ -75,13 +72,13 @@ class MainActivity : Activity() {
         }
 
         override fun getItemCount(): Int {
-            return list?.size?: 1
+            return list?.size?: 0
         }
 
         override fun onBindViewHolder(holder: SimpleHolder, position: Int) {
-            var msg = getData(position)
-            holder.sender.text = msg?.address
-            holder.body.text = msg?.body
+            val msg = getData(position)
+            holder.itemSender.text = msg?.address
+            holder.itemBody.text = msg?.body
         }
 
         fun getData(position: Int):Message?{
